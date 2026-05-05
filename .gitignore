@@ -1,0 +1,29 @@
+# --- ENTORNOS VIRTUALES ---
+.venv/
+venv/
+env/
+
+# --- CACHÉ DE PYTHON ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- MAC OS ---
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# --- CONFIGURACIÓN DEL EDITOR ---
+.vscode/
+
+# --- VARIABLES DE ENTORNO Y BASES DE DATOS ---
+.env
+.env.local
+*.sqlite3
+*.db
+*.log
+
+# --- ARCHIVOS TEMPORALES Y DATOS ---
+*.csv
