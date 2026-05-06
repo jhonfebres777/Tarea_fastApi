@@ -1,47 +1,50 @@
+# app.py
 from fastapi import FastAPI
-from pydantic import BaseModel
-
-#para iniciar el servidor 
-#  se ejecuta el siguente comando en la terminal: uvicorn main:app --reload 
-# en caso de que sea otro numbre de archivo se cambia main por el
-#  nombre del archivo sin la extension .py   
+from fastapi.middleware.cors import CORSMiddleware
+from Config.database import client
+from routers import products  # Importaremos el router que crearemos luego 
 
 
-# Definimos un modelo de datos para el usuario utilizando Pydantic
-# Esto nos permite validar y documentar automáticamente los datos de entrada
-#asi definie los modelos de datos que se esperan recibir en las solicitudes HTTP, 
-# lo que facilita la validación y el manejo de errores.
-#definiendo los campos con su respectoivo tipo de dato, 
-# esto nos permite asegurarnos de que los datos recibidos sean del tipo correcto 
-# y cumplan con las restricciones definidas.
+# Inicializar la aplicación FastAPI
+app = FastAPI(
+    title="Mi API",
+    description="API de ejemplo con FastAPI y MongoDB",
+    version="0.1.0"
+)
 
-class User(BaseModel):
-    id: int
-    name: str
-    surnemame: str
-    age: int
-    email: str
+# Configurar CORS (Cross-Origin Resource Sharing)
+origins = [
+    "http://localhost:3000",  # Permitir frontend en React (ejemplo)
+    "http://localhost:5173",  # Permitir frontend en Vite/Svelte (ejemplo)
+]
 
-app = FastAPI()
- 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
- # Creamos una lista para almacenar los usuarios en memoria
- #
+# Incluir las rutas de los routers
+app.include_router(products.router, prefix="/api/v1/products", tags=["Products"])
 
-users_list = [
-    User(id=1, name="John", surnemame="Doe", age=30, email="john.doe@example.com"),
-    User(id=2, name="Jane", surnemame="Smith", age=25, email="jane.smith@example.com"),
-    User(id=3, name="Alice", surnemame="Johnson", age=28, email="alice@example.com"),] 
+# Endpoint de salud ("health check")
+@app.get("/health", tags=["Health"])
+def health_check():
+    return {"status": "ok", "message": "El servicio está funcionando correctamente"}
 
+# Manejo de eventos (startup y shutdown) - Bueno para conexiones
+@app.on_event("startup")
+async def startup_event():
+    # Verificar conexión a la BD al iniciar
+    try:
+        client.admin.command('ping')
+        print("¡Conectado a MongoDB exitosamente!")
+    except Exception as e:
+        print(f"Error al conectar a MongoDB:{e}")
 
-@app.post("/users")
-async def create_user(user: User):
-    users_list.append(user)
-    return users_list
-
-@app.get("/users/{user_id}")
-async def get_user(user_id: int):
-    for user in users_list:
-        if user.id == user_id:
-            return list(user)
-    return {"error": "User not found"}
+@app.on_event("shutdown")
+async def shutdown_event():
+    client.close()
+    print("Conexión a MongoDB cerrada.")
