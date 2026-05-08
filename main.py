@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from Config.database import client
 from routers import products  # Importaremos el router que crearemos luego 
-
+from routers import users  # Importar el router de usuarios (si lo creamos)
 
 # Inicializar la aplicación FastAPI
 app = FastAPI(
@@ -28,6 +28,7 @@ app.add_middleware(
 
 # Incluir las rutas de los routers
 app.include_router(products.router, prefix="/api/v1/products", tags=["Products"])
+app.include_router(users.router, prefix="/api/v1/users", tags=["Users"])  
 
 # Endpoint de salud ("health check")
 @app.get("/health", tags=["Health"])

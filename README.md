@@ -112,3 +112,48 @@ Optimizing tool selection...
      3. Envía requests, verifica status codes (200, 404), y datos JSON.
    - **Aprendizaje**: Usa para validar CRUD. Prueba errores (e.g., ID inválido).
 
+🏗️ Arquitectura de Software
+El proyecto está construido bajo un enfoque de Arquitectura en Capas (Layered Architecture) con fuertes influencias de Arquitectura Limpia (Clean Architecture). Esta estructura garantiza la separación de responsabilidades, facilitando el mantenimiento y la escalabilidad del sistema.
+
+🏛️ Estructura de Capas
+Capa de Presentación (Routers): Gestiona las interacciones HTTP y la validación de esquemas mediante Pydantic (e.g., routers/products.py).
+
+Capa de Lógica de Negocio (Servicios): Contiene las reglas de negocio y validaciones centrales de la aplicación (e.g., Internal/productsService.py).
+
+Capa de Acceso a Datos (Persistencia): Administra la conexión y consultas a MongoDB de forma centralizada en Config/database.py.
+
+Capa de Infraestructura: Configura el framework FastAPI, middlewares (CORS) y eventos del ciclo de vida en main.py.
+
+
+Shutterstock
+Explorar
+💡 Principios de Diseño Aplicados
+Single Responsibility Principle (SRP): Cada módulo tiene una responsabilidad única: los routers manejan el tráfico, los servicios la lógica y la configuración la base de datos.
+
+Inversión de Dependencias (DIP): Las capas superiores consumen abstracciones de la base de datos, permitiendo una mayor independencia del motor de persistencia.
+
+Separación de Preocupaciones: La lógica de negocio está aislada de los detalles de implementación del framework web y la infraestructura.
+
+🛠️ Buenas Prácticas de Ingeniería
+Validación Rigurosa: Uso de Pydantic para asegurar la integridad de los datos en runtime y serialización automática de respuestas.
+
+Testing Automatizado: Suite de pruebas con Pytest, utilizando un entorno configurado mediante conftest.py y pytest.ini para inyección de fixtures globales.
+
+Gestión de Entorno: Configuración basada en variables de entorno (.env) para proteger credenciales y permitir despliegues flexibles.
+
+Manejo de Errores Estandarizado: Implementación de excepciones HTTP controladas y validaciones de conexión en los eventos de inicio del sistema.
+
+📈 Escalabilidad Futura
+La arquitectura actual está preparada para evolucionar hacia una Arquitectura Hexagonal (Ports & Adapters) completa, permitiendo migrar de base de datos o añadir múltiples interfaces (CLI, Web, Mobile) con un impacto mínimo en el núcleo del negocio.
+
+Recomendación de Visualización
+Puedes añadir este bloque de código justo debajo del título anterior en tu README para mostrar tu estructura de archivos organizada:
+
+Plaintext
+📂 Trabajo_FastApi
+├── 📂 Config          # Capa de Acceso a Datos (DB Config)
+├── 📂 Internal        # Capa de Negocio (Services)
+├── 📂 routers         # Capa de Presentación (API Endpoints)
+├── 📂 tests           # Infraestructura de Pruebas (Pytest)
+├── main.py            # Punto de entrada e Infraestructura
+└── requirements.txt   # Gestión de dependencias
